@@ -7,6 +7,4 @@ dependencies:
 - scipy
 - widgetsnbextension
 - ipywidgets
-- fractions
 - sympy
-- decimal
