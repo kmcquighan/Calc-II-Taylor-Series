@@ -1,0 +1,12 @@
+name: environment
+
+dependencies:
+- python = 3.4
+- numpy
+- matplotlib
+- scipy
+- widgetsnbextension
+- ipywidgets
+- fractions
+- sympy
+- decimal
