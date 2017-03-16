@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Copyright Kelly McQuighan 2016
+Kelly McQuighan 2016
 
-These tools can be used to visualize Taylor Series.
+These tools can be used to visualize Taylor Series and convergence of a Taylor series.
 """
 
 import matplotlib as mpl
@@ -16,6 +16,11 @@ mpl.rcParams['font.size'] = 17
 colors = ['#A90000', '#D06728', '#D9A621', '#008040', '#0080FF', '#7B00F1']
 alph = 0.4; alph2 = 0.7; alph3 = 1.0
 
+"""
+This function plots the Taylor polynomial approximation as well as the evaluation of
+the approximation at a specific value of x. When "display_polynomial" is set to True,
+it also constructs and displays the Taylor polynomial. 
+"""
 def polynomial(f, a, x0, n, xmin, xmax, ymin, ymax, display_polynomial):     
     
     nx = 50; nmax=17
@@ -116,6 +121,7 @@ def polynomial(f, a, x0, n, xmin, xmax, ymin, ymax, display_polynomial):
         ax1.plot(x0,sn,colors[cidx], markeredgecolor=colors[cidx], linewidth=3, marker='o',markersize=15, alpha=alph)
         ax2.plot(i,sn,colors[cidx], markeredgecolor=colors[cidx], linewidth=3, marker='o',markersize=15,alpha=alph2)
         
+        # Only construct the polynomial if the "display polynomial" option is turned on
         if display_polynomial:
             if fpa_frac.denominator < 10**10:
                 frac = Fraction(fpa)*Fraction(1, int(sympy.factorial(i)))               
@@ -188,11 +194,14 @@ def polynomial(f, a, x0, n, xmin, xmax, ymin, ymax, display_polynomial):
     ax1.legend(fontsize=26, loc=0)
     ax2.legend(fontsize=26, loc=0, numpoints=1)
 
+"""
+This function plots the remainder function as well as the value of the remainder
+for a specific choice of x.
+"""
 def remainder(f, a, x0, n, xmin, xmax, ymin, ymax):     
     
     nx = 50; nmax=17
     nc = len(colors)
-    #alph = 0.4; alph2 = 0.8; alph3 = 0.9
     
     assert xmax>xmin
     
@@ -266,7 +275,12 @@ def remainder(f, a, x0, n, xmin, xmax, ymin, ymax):
     
     ax3.legend(fontsize=26, loc=0)
     ax4.legend(fontsize=26, loc=0, numpoints=1)
+    
 
+"""
+This function plots the error bound of the remainder as well as the remainder 
+itself.
+"""
 def error_bound(f, a, x0, n, xmin, xmax):     
     
     nx = 50;
@@ -344,11 +358,17 @@ def error_bound(f, a, x0, n, xmin, xmax):
           
     ax5.legend(fontsize=26, loc=0)
 
+"""
+This function plots everything: The Taylor series approximation, the error, and
+the error bound, all on one plot. This makes it easier to visualize how each
+object is related to the others. However, due to the number of number of computations
+the interactive update in the IPython notebook is slow. 
+"""
 def all_tools(f, a, x0, n, xmin, xmax, ymin, ymax, ymin_remainder, ymax_remainder):     
 
     nx = 50; nmax=17
     nc = len(colors)
-    #alph = 0.4; alph2 = 0.8; alph3 = 0.9
+
     if a>0:
         absxtext = r'$|x-%.1f|$' %a
     elif a<0:
