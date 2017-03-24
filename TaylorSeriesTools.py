@@ -56,22 +56,6 @@ def get_poly_values(fa,i):
     
     return [num,denom,e]
 
-def get_fxtext(num,denom,e,fa):
-    if denom!=1:
-        if fa>=0:
-            fxtext = r'$\frac{'+'{0:.{1}f}'.format(np.abs(num), e) +r'}{%d}$'%denom 
-        else:
-            fxtext = r'-$\frac{'+'{0:.{1}f}'.format(np.abs(num), e) +r'}{%d}$'%denom
-    else:
-        if fa>0:
-            fxtext = r'{0:.{1}f} '.format(num, e)
-        elif fa<0:
-            fxtext = r'-{0:.{1}f} '.format(np.abs(num), e)
-        else:
-            fxtext = '0'
-    
-    return fxtext
-
 def get_termsign(c):
     if c>0:
         termsign = '+'
@@ -91,36 +75,51 @@ def new_line(nterms):
     else:
         return ''
 
-# Outputs everything in the next term: +/- sign, coefficient and the x variable (x-a). 
-# The only thing missing is the power of (x-a) which is taken care of in a different
-# function. Outputting the coefficient properly is tricky. The cases are:
+# Outputs the coeffient and the proper +/- sign
+# Outputting the coefficient properly is tricky. The cases are:
 # - numerator/denominator if denominator!=1
 # - numerator if numerator!=1
 # - otherwise nothing since this means the coefficient is exactly 1 and
 #    it looks ugly to write 1*(x-a)...
-def format_polynomial(num,denom,e,zero_fxtext,termsign,xtext):
-    
+# Outputting a + sign only if this is not the first term
+def format_coefficient(num,denom,e,zero_fxtext,termsign):
     if denom!=1:
         if zero_fxtext and termsign=='+':
-            return r'$\frac{'+'{0:.{1}f}'.format(np.abs(num), e) +r'}{%d}$'%denom +xtext
+            return r'$\frac{'+'{0:.{1}f}'.format(np.abs(num), e) +r'}{%d}$'%denom
         elif zero_fxtext and termsign=='-':
-            return r'-$\frac{'+'{0:.{1}f}'.format(np.abs(num), e) +r'}{%d}$'%denom +xtext
+            return r'-$\frac{'+'{0:.{1}f}'.format(np.abs(num), e) +r'}{%d}$'%denom
         else:
-            return termsign+r' $\frac{'+'{0:.{1}f}'.format(np.abs(num), e) +r'}{%d}$'%denom +xtext
+            return termsign+r' $\frac{'+'{0:.{1}f}'.format(np.abs(num), e) +r'}{%d}$'%denom
     elif np.abs(num)!=1:
         if zero_fxtext and termsign=='+':
-            return r'{0:.{1}f}'.format(num, e)+xtext
+            return r'{0:.{1}f}'.format(num, e)
         elif zero_fxtext and termsign=='-':
-            return r'-{0:.{1}f}'.format(np.abs(num), e)+xtext
+            return r'-{0:.{1}f}'.format(np.abs(num), e)
         else:
-            return termsign+r' {0:.{1}f}'.format(np.abs(num), e) +xtext
+            return termsign+r' {0:.{1}f}'.format(np.abs(num), e)
     else:
         if zero_fxtext and termsign=='+':
-            return xtext
+            return ''
         elif zero_fxtext and termsign=='-':
-            return '-'+xtext
+            return '-'
         else:
-            return termsign+' '+xtext
+            return termsign+' '
+
+# Do not print (x-a) if its the first term
+# Also make sure to actually print a +/-1 if its the first term and the coefficient
+# is +/-1        
+def format_polynomial(num,denom,e,zero_fxtext,termsign,xtext,i):
+    
+    coeff_text = format_coefficient(num,denom,e,zero_fxtext,termsign)
+    if (i==0):
+        if (coeff_text == ''):
+            return '1'
+        elif (coeff_text == '-'):
+            return '-1'
+        else:
+            return coeff_text
+    else:
+        return coeff_text+xtext
 
 # ouputs ^i provided i>1
 def format_power(i,termsign):
@@ -148,9 +147,9 @@ def update_text(fxtext,nterms,fa,xtext,i):
         fxtext += new_line(nterms)
         
         if (fxtext=='0'):
-            fxtext = format_polynomial(num,denom,e,True,termsign,xtext)
+            fxtext = format_polynomial(num,denom,e,True,termsign,xtext,i)
         else:
-            fxtext += format_polynomial(num,denom,e,False,termsign,xtext)
+            fxtext += format_polynomial(num,denom,e,False,termsign,xtext,i)
             
         fxtext += format_power(i,termsign)
     
@@ -272,13 +271,14 @@ def polynomial(f, a, x0, n, xmin, xmax, ymin, ymax, display_polynomial):
     
     
     if display_polynomial:    
-        [num,denom,e] = get_poly_values(fa,0)        
-        fxtext = get_fxtext(num,denom,e,fa)
+        [num,denom,e] = get_poly_values(fa,0)
+        [fxtext,nterms] = update_text('0',0,fa,xtext,0)
+        #fxtext = get_fxtext(num,denom,e,fa)
         # this is for pretty output: don't print a "0"
-        if fa!=0:
-            nterms = 1
-        else:
-            nterms = 0
+        #if fa!=0:
+        #    nterms = 1
+        #else:
+        #    nterms = 0
         
     plt.figure(figsize=(20, 10))
     plt.rc('xtick', labelsize=26) 
