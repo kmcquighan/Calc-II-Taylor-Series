@@ -91,9 +91,13 @@ def new_line(nterms):
     else:
         return ''
 
-# Outputs everything in the next term: +/- sign, coefficient (written correctly
-# as numerator/denominator), and the x variable (x-a). The only thing missing
-# is the power of (x-a)
+# Outputs everything in the next term: +/- sign, coefficient and the x variable (x-a). 
+# The only thing missing is the power of (x-a) which is taken care of in a different
+# function. Outputting the coefficient properly is tricky. The cases are:
+# - numerator/denominator if denominator!=1
+# - numerator if numerator!=1
+# - otherwise nothing since this means the coefficient is exactly 1 and
+#    it looks ugly to write 1*(x-a)...
 def format_polynomial(num,denom,e,zero_fxtext,termsign,xtext):
     
     if denom!=1:
