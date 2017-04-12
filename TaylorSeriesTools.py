@@ -10,6 +10,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from fractions import Fraction
 from sympy import *
+from numpy import *
 import sympy
 import decimal
 mpl.rcParams['font.size'] = 17
